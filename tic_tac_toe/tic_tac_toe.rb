@@ -53,7 +53,6 @@ module TicTacToe
       end
       return unless @draw >= 9 && @win == false
 
-      visualize_board
       puts "It's a draw!"
       @win = true
     end
@@ -66,33 +65,22 @@ module TicTacToe
     end
 
     def place_marker(marker, place)
-      # for lang metode, veldig spesifikk bruk og veldig repetetiv
-      if place <= 3
-        if @rows[0][place - 1][0] != 'x' && @rows[0][place - 1][0] != 'o'
-          @rows[0][place - 1][0] = marker
-        else
-          puts 'Please enter a valid field'
-          @error = true
-        end
-      elsif place <= 6
-        if @rows[1][place - 4][0] != 'x' && @rows[1][place - 4][0] != 'o'
-          @rows[1][place - 4][0] = marker
-        else
-          puts 'Please enter a valid field'
-          @error = true
-        end
-      elsif place <= 9
-        if @rows[2][place - 7][0] != 'x' && @rows[2][place - 7][0] != 'o'
-          @rows[2][place - 7][0] = marker
-        else
-          puts 'Please enter a valid field'
-          @error = true
+      not_valid_place = true
+      @rows.each_index do |i|
+        @rows.each_index do |a|
+          if @rows[i][a].include? place
+            @rows[i][a][0] = marker
+            not_valid_place = false
+          end
         end
       end
+      return unless not_valid_place == true
+
+      puts 'Please enter a valid field'
     end
 
-    def is_error(value)
-      if (1..9) === value.to_i && value.to_i.to_s == value
+    def is_input_allowed(value)
+      if (1..9).include?(value.to_i) && value.to_i.to_s == value
         @error = false
       else
         @error = true
@@ -108,17 +96,16 @@ module TicTacToe
       @error = false
       visualize_board
       until @win == true
-        input1 = gets.chomp
-        input = input1.to_i
-        is_error(input1)
+        input = gets
+        is_input_allowed(input.chomp)
         if @error == false
           if marker === 'x' && @error == false
-            place_marker('x', input)
+            place_marker('x', input.to_i)
             visualize_board
             check_for_win('xxx', 'Player1')
             marker = 'o' unless @error == true
           elsif marker === 'o' && @error == false
-            place_marker('o', input)
+            place_marker('o', input.to_i)
             visualize_board
             check_for_win('ooo', 'Player2')
             marker = 'x' unless @error == true
@@ -131,4 +118,4 @@ end
 
 new_board = TicTacToe::Game.new.play
 
-# legge til score
+# legge til score og loop spillet
