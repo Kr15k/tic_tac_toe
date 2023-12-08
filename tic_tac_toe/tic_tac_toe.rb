@@ -15,30 +15,17 @@ module TicTacToe
       end
     end
 
-    def check_if_win_x(marker, player)
-      @rows.each_index do |i|
-        next unless @rows[i].join == marker
-
-        puts "#{player} won!"
-        @win = true
-      end
-    end
-
-    def check_if_win_y(marker, player)
+    def check_if_win_x_y(marker, player)
       big_board = @rows.flatten
+      line1 = big_board[0], big_board[0 + 4], big_board[0 + 8] # checks diagonal 1
+      line2 = big_board[2], big_board[2 + 2], big_board[2 + 4] # checks diagonal 2
       @rows.each_index do |i|
         line = big_board[i], big_board[i + 3], big_board[i + 6]
-        next unless line.join == marker
+        next unless @rows[i].join == marker || line.join == marker
 
         puts "#{player} won!"
         @win = true
       end
-    end
-
-    def check_if_win_diagonal(marker, player)
-      big_board = @rows.flatten
-      line1 = big_board[0], big_board[0 + 4], big_board[0 + 8]
-      line2 = big_board[2], big_board[2 + 2], big_board[2 + 4]
       return unless line1.join == marker || line2.join == marker
 
       puts "#{player} won!"
@@ -58,9 +45,7 @@ module TicTacToe
     end
 
     def check_for_win(marker, player)
-      check_if_win_diagonal(marker, player)
-      check_if_win_x(marker, player)
-      check_if_win_y(marker, player)
+      check_if_win_x_y(marker, player)
       check_if_draw
     end
 
@@ -77,6 +62,7 @@ module TicTacToe
       return unless not_valid_place == true
 
       puts 'Please enter a valid field'
+      @error = true
     end
 
     def is_input_allowed(value)
@@ -99,12 +85,12 @@ module TicTacToe
         input = gets
         is_input_allowed(input.chomp)
         if @error == false
-          if marker === 'x' && @error == false
+          if marker == 'x' && @error == false
             place_marker('x', input.to_i)
             visualize_board
             check_for_win('xxx', 'Player1')
             marker = 'o' unless @error == true
-          elsif marker === 'o' && @error == false
+          elsif marker == 'o' && @error == false
             place_marker('o', input.to_i)
             visualize_board
             check_for_win('ooo', 'Player2')
